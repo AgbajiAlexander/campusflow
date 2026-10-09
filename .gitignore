@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Runtime data files (specified in PRD Section 10)
+data/
+data/tickets.json
+*.json.bak
+
+# Environments & IDEs
+.env
+.venv/
+env/
+venv/
+.vscode/
+.idea/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+*.lnk
+
