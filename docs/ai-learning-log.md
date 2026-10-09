@@ -4,7 +4,7 @@ This log documents prompt-engineering interactions, human verification, and crit
 
 ---
 
-## Engineer A (Core Data, Priority Engine & Persistence)
+## Engineer A: Alexander Agbaji (@AgbajiAlexander) — Core Data, Priority Engine & Persistence
 
 ### Entry A1: Priority Engine Rule Hierarchy
 - **Context & Goal:** Generate the priority engine algorithm from PRD Section 7.
@@ -33,7 +33,7 @@ This log documents prompt-engineering interactions, human verification, and crit
 
 ---
 
-## Engineer B (Workflow, Analytics, Work Queue & CLI)
+## Engineer B: Eli Odeh (@eliodeh) — Workflow, Analytics, Work Queue & CLI
 
 ### Entry B1: Workflow Transition Validation & Unassigned Guard
 - **Context & Goal:** Implement lifecycle transitions (`open -> in_progress -> resolved`) and locking in `workflow.py`.

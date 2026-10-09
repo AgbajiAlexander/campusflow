@@ -7,8 +7,8 @@ This document records the cross-engineer code review cycle and approvals require
 ## PR #1: Core Ticket Ingestion, Validation & Persistence
 
 - **Branch:** `feat/1-core-ticket-storage`
-- **Author:** Engineer A
-- **Reviewer:** Engineer B
+- **Author:** Alexander Agbaji (@AgbajiAlexander - Engineer A)
+- **Reviewer:** Eli Odeh (@eliodeh - Engineer B)
 - **Status:** **APPROVED & MERGED**
 - **Associated Issue:** #1 — *Implement ticket data models, priority engine, and JSON persistence*
 
@@ -41,8 +41,8 @@ This document records the cross-engineer code review cycle and approvals require
 ## PR #2: Workflow Transitions, Work Queue, Analytics & CLI
 
 - **Branch:** `feat/2-workflow-reporting`
-- **Author:** Engineer B
-- **Reviewer:** Engineer A
+- **Author:** Eli Odeh (@eliodeh - Engineer B)
+- **Reviewer:** Alexander Agbaji (@AgbajiAlexander - Engineer A)
 - **Status:** **APPROVED & MERGED**
 - **Associated Issue:** #2 — *Implement assignment, lifecycle state machine, work queue, reports, and CLI*
 

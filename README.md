@@ -11,13 +11,13 @@
 ## 👥 Team & Sprint Details
 
 - **Product:** CampusFlow CLI
-- **Owners:** Engineer A (Upstream / Core Data & Persistence) & Engineer B (Fork / Workflow & Analytics)
+- **Owners:** Alexander Agbaji (@AgbajiAlexander - Engineer A) & Eli Odeh (@eliodeh - Engineer B)
 - **Sprint:** AI-Native Engineering Sprint (6 Hours, 100 Marks)
 - **Status:** Complete & Tested
 
 ### Dual-Repository Setup
-- **Engineer A (Upstream central repository):** `https://github.com/EngineerA/CampusFlow.git`
-- **Engineer B (Personal fork):** `https://github.com/EngineerB/CampusFlow.git`
+- **Engineer A (Upstream central repository):** `https://github.com/AgbajiAlexander/CampusFlowTeamG.git`
+- **Engineer B (Personal fork):** `https://github.com/eliodeh/CampusFlowTeamG.git`
 
 ---
 
@@ -176,11 +176,11 @@ OK
 
 ### Remote Repositories
 ```bash
-# Upstream repository (Engineer A)
-git remote add origin https://github.com/EngineerA/CampusFlow.git
+# Upstream repository (Engineer A - Alexander Agbaji)
+git remote add origin https://github.com/AgbajiAlexander/CampusFlowTeamG.git
 
-# Fork repository (Engineer B)
-git remote add fork https://github.com/EngineerB/CampusFlow.git
+# Fork repository (Engineer B - Eli Odeh)
+git remote add fork https://github.com/eliodeh/CampusFlowTeamG.git
 ```
 
 ### Feature Branches
