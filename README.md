@@ -16,8 +16,8 @@
 - **Status:** Complete & Tested
 
 ### Dual-Repository Setup
-- **Engineer A (Upstream central repository):** `https://github.com/AgbajiAlexander/CampusFlowTeamG.git`
-- **Engineer B (Personal fork):** `https://github.com/eliodeh/CampusFlowTeamG.git`
+- **Engineer A (Upstream central repository):** `https://github.com/AgbajiAlexander/CampusFlow.git`
+- **Engineer B (Personal fork):** `https://github.com/eliodeh/CampusFlow.git`
 
 ---
 
@@ -177,10 +177,10 @@ OK
 ### Remote Repositories
 ```bash
 # Upstream repository (Engineer A - Alexander Agbaji)
-git remote add origin https://github.com/AgbajiAlexander/CampusFlowTeamG.git
+git remote add origin https://github.com/AgbajiAlexander/CampusFlow.git
 
 # Fork repository (Engineer B - Eli Odeh)
-git remote add fork https://github.com/eliodeh/CampusFlowTeamG.git
+git remote add fork https://github.com/eliodeh/CampusFlow.git
 ```
 
 ### Feature Branches

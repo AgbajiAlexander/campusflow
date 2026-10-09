@@ -9,7 +9,7 @@ In alignment with **PRD Section 11** and the agreed sprint roles:
   - **F2 — List & View**: Tabular summaries and full record lookups.
   - **F7 — Persistence**: Safe JSON storage, atomic file replacement, and corruption protection.
   - **Branch**: `feat/1-core-ticket-storage`
-  - **Repository**: Upstream central repository (`https://github.com/AgbajiAlexander/CampusFlowTeamG.git`).
+  - **Repository**: Upstream central repository (`https://github.com/AgbajiAlexander/CampusFlow.git`).
 
 - **Engineer B: Eli Odeh (@eliodeh) — Fork / Workflow & Analytics**:
   - **F3 — Assign Staff**: Assignee validation and reassignment handling.
@@ -18,7 +18,7 @@ In alignment with **PRD Section 11** and the agreed sprint roles:
   - **F6 — Analytical Reports**: Summary counts and status/priority aggregations with zero-count safety.
   - **CLI Menu Loop**: Interactive console driver integrating all modules.
   - **Branch**: `feat/2-workflow-reporting`
-  - **Repository**: Developer fork (`https://github.com/eliodeh/CampusFlowTeamG.git`).
+  - **Repository**: Developer fork (`https://github.com/eliodeh/CampusFlow.git`).
 
 ---
 
@@ -86,7 +86,7 @@ CampusFlowTeamG/
 ## 6. GitHub Multi-Repo Collaboration Workflow
 
 To reflect the team's two-repository setup:
-1. `origin`: Upstream repository managed by Engineer A — Alexander Agbaji (`https://github.com/AgbajiAlexander/CampusFlowTeamG.git`).
-2. `fork`: Forked repository managed by Engineer B — Eli Odeh (`https://github.com/eliodeh/CampusFlowTeamG.git`).
+1. `origin`: Upstream repository managed by Engineer A — Alexander Agbaji (`https://github.com/AgbajiAlexander/CampusFlow.git`).
+2. `fork`: Forked repository managed by Engineer B — Eli Odeh (`https://github.com/eliodeh/CampusFlow.git`).
 3. Branches follow the required specification: `<type>/<issue-number>-<short-description>`.
 4. Pull Requests require cross-engineer reviews with substantive technical comments prior to merging into `main`.

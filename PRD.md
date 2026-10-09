@@ -2,7 +2,7 @@
 **Product:** CampusFlow — Campus IT Helpdesk Ticket Manager (CLI)
 **Owner:** Alexander Agbaji (@AgbajiAlexander) & Eli Odeh (@eliodeh)
 **Sprint:** AI-Native Engineering Sprint, 6 hours, 100 marks
-**Status:** Final / Active — Upstream: https://github.com/AgbajiAlexander/CampusFlowTeamG | Fork: https://github.com/eliodeh/CampusFlowTeamG
+**Status:** Final / Active — Upstream: https://github.com/AgbajiAlexander/CampusFlow | Fork: https://github.com/eliodeh/CampusFlow
 
 ---
 
