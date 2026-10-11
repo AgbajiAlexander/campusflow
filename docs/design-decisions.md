@@ -4,21 +4,21 @@
 
 In alignment with **PRD Section 11** and the agreed sprint roles:
 
-- **Engineer A (Upstream / Core Data & Persistence)**:
+- **Engineer A: Alexander Agbaji (@AgbajiAlexander) — Upstream / Core Data & Persistence**:
   - **F1 — Create Ticket**: Input validation, ID sequencing (`T001`), and priority evaluation.
   - **F2 — List & View**: Tabular summaries and full record lookups.
   - **F7 — Persistence**: Safe JSON storage, atomic file replacement, and corruption protection.
   - **Branch**: `feat/1-core-ticket-storage`
-  - **Repository**: Upstream central repository (`origin`).
+  - **Repository**: Upstream central repository (`https://github.com/AgbajiAlexander/CampusFlow.git`).
 
-- **Engineer B (Fork / Workflow & Analytics)**:
+- **Engineer B: Eli Odeh (@eliodeh) — Fork / Workflow & Analytics**:
   - **F3 — Assign Staff**: Assignee validation and reassignment handling.
   - **F4 — Ticket Lifecycle**: State machine transitions (`open -> in_progress -> resolved`) and resolved-ticket locking / reopening.
   - **F5 — Work Queue**: Filtered active ticket prioritization with numeric ID tie-breakers.
   - **F6 — Analytical Reports**: Summary counts and status/priority aggregations with zero-count safety.
   - **CLI Menu Loop**: Interactive console driver integrating all modules.
   - **Branch**: `feat/2-workflow-reporting`
-  - **Repository**: Developer fork (`fork`).
+  - **Repository**: Developer fork (`https://github.com/eliodeh/CampusFlow.git`).
 
 ---
 
@@ -86,7 +86,7 @@ CampusFlowTeamG/
 ## 6. GitHub Multi-Repo Collaboration Workflow
 
 To reflect the team's two-repository setup:
-1. `origin`: Upstream repository managed by Engineer A (`https://github.com/EngineerA/CampusFlow.git`).
-2. `fork`: Forked repository managed by Engineer B (`https://github.com/EngineerB/CampusFlow.git`).
+1. `origin`: Upstream repository managed by Engineer A — Alexander Agbaji (`https://github.com/AgbajiAlexander/CampusFlow.git`).
+2. `fork`: Forked repository managed by Engineer B — Eli Odeh (`https://github.com/eliodeh/CampusFlow.git`).
 3. Branches follow the required specification: `<type>/<issue-number>-<short-description>`.
 4. Pull Requests require cross-engineer reviews with substantive technical comments prior to merging into `main`.

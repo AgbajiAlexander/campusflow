@@ -1,8 +1,8 @@
 # PRD — CampusFlow
 **Product:** CampusFlow — Campus IT Helpdesk Ticket Manager (CLI)
-**Owner:** [Engineer A] & [Engineer B]
+**Owner:** Alexander Agbaji (@AgbajiAlexander) & Eli Odeh (@eliodeh)
 **Sprint:** AI-Native Engineering Sprint, 6 hours, 100 marks
-**Status:** Draft → fill in team names/repo link once created
+**Status:** Final / Active — Upstream: https://github.com/AgbajiAlexander/CampusFlow | Fork: https://github.com/eliodeh/CampusFlow
 
 ---
 
