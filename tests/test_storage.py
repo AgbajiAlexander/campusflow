@@ -98,6 +98,65 @@ class TestStorage(unittest.TestCase):
             persisted = f.read()
         self.assertEqual(persisted, corrupt_content)
 
+    def test_duplicate_ticket_id_rejected_without_state_loss(self):
+        """Requirement E: two tickets sharing an ID must reject the whole load."""
+        os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+        duplicate_data = [
+            {
+                "id": "T001", "title": "First", "category": "Network", "urgency": "high",
+                "affected_users": 5, "priority": "high", "status": "open",
+                "assigned_to": None, "notes": [],
+            },
+            {
+                "id": "T001", "title": "Second (duplicate ID)", "category": "Software",
+                "urgency": "low", "affected_users": 1, "priority": "low", "status": "open",
+                "assigned_to": None, "notes": [],
+            },
+        ]
+        with open(self.storage_path, "w", encoding="utf-8") as f:
+            json.dump(duplicate_data, f)
+
+        loaded, err = storage.load_tickets(self.storage_path)
+        self.assertEqual(loaded, [])
+        self.assertIsNotNone(err)
+        self.assertIn("Duplicate ticket ID", err)
+
+    def test_notes_and_next_note_id_survive_save_and_reload(self):
+        """Required case #12: saving/loading preserves notes and next IDs."""
+        import notes as notes_module
+
+        tickets_list = [tickets.create_ticket([], "Wifi down", "Network", "high", 15)]
+        notes_module.add_note(tickets_list, tickets_list[0]["id"], "Mentor A", "First note of fair length")
+        storage.save_tickets(tickets_list, self.storage_path)
+
+        reloaded, err = storage.load_tickets(self.storage_path)
+        self.assertIsNone(err)
+        self.assertEqual(len(reloaded[0]["notes"]), 1)
+        self.assertEqual(reloaded[0]["notes"][0]["note_id"], "N001")
+
+        # Next note ID after reload must continue from N001, not restart or collide
+        second_note = notes_module.add_note(reloaded, reloaded[0]["id"], "Mentor B", "Second note after reload")
+        self.assertEqual(second_note["note_id"], "N002")
+
+    def test_old_record_missing_notes_field_is_migrated_not_rejected(self):
+        """Backward compatibility: tickets saved by the ORIGINAL CampusFlow
+        (pre-Next) have no 'notes' key at all. Loading must migrate them to
+        notes=[] rather than rejecting perfectly good old data.
+        """
+        os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+        old_style_record = [{
+            "id": "T001", "title": "Pre-existing ticket", "category": "Network",
+            "urgency": "high", "affected_users": 12, "priority": "critical",
+            "status": "open", "assigned_to": None,
+            # no "notes" key -- this is what v1 saved
+        }]
+        with open(self.storage_path, "w", encoding="utf-8") as f:
+            json.dump(old_style_record, f)
+
+        loaded, err = storage.load_tickets(self.storage_path)
+        self.assertIsNone(err)
+        self.assertEqual(loaded[0]["notes"], [])
+
 
 if __name__ == "__main__":
     unittest.main()
