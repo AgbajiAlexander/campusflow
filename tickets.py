@@ -140,6 +140,7 @@ def create_ticket(
         "priority": priority,
         "status": "open",
         "assigned_to": None,
+        "notes": [],
     }
     return ticket
 
