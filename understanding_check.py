@@ -125,8 +125,26 @@ def run_understanding_check() -> None:
                 break
             print("Invalid choice -- please enter A, B, C, or D.")
 
+    print("\n" + "=" * 60)
+    print("         UNDERSTANDING CHECK REVIEW & RESULTS         ")
+    print("=" * 60)
+    for question in QUESTIONS:
+        qid = question["id"]
+        user_ans = answers.get(qid, "")
+        correct_ans = question["correct"]
+        correct_text = question["options"][correct_ans]
+        user_text = question["options"].get(user_ans, "No answer")
+
+        if user_ans == correct_ans:
+            print(f"  ✓ {qid}: Correct! You selected [{user_ans}] {user_text}")
+        else:
+            print(f"  ✗ {qid}: Incorrect! You selected [{user_ans}] {user_text}")
+            print(f"     --> Correct Answer: [{correct_ans}] {correct_text}")
+
     score = score_answers(answers)
-    print(f"\nScore: {score}/{len(QUESTIONS)}")
+    print("=" * 60)
+    print(f"Final Score: {score}/{len(QUESTIONS)}")
+    print("=" * 60)
 
     print("\nExplain your answer for at least two questions (for mentor discussion):")
     explained = 0
