@@ -64,6 +64,7 @@ This log documents prompt-engineering interactions, human verification, and crit
 ---
 
 ## CampusFlow Next Sprint — Engineer B Learning Cycles (Section 07)
+**Engineer B:** Gabriel Oche Adanu (@Aocheg)
 
 ### Entry B4: Case-Insensitive Title Matching (`casefold()` vs `lower()`)
 - **Concept Gap:** Determining the most reliable approach for caseless substring search on ticket titles in Python.

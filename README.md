@@ -11,7 +11,7 @@
 ## 👥 Team & Sprint Details
 
 - **Product:** CampusFlow CLI
-- **Owners:** Alexander Agbaji (@AgbajiAlexander - Engineer A) & Eli Odeh (@eliodeh - Engineer B)
+- **Owners:** Alexander Agbaji (@AgbajiAlexander - Engineer A) & Gabriel Oche Adanu (@Aocheg - Engineer B, continuing on the team repository originally initiated with Eli Odeh)
 - **Sprint:** AI-Native Engineering Sprint (6 Hours, 100 Marks)
 - **Status:** Complete & Tested
 
