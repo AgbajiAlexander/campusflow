@@ -136,3 +136,36 @@ This log documents prompt-engineering interactions, human verification, and crit
 - **Verification & Critical Evaluation:** Non-integer inputs caused unhandled `ValueError` crashes, terminating the CLI session and dropping unpersisted memory state.
 - **Correction Applied (IMPROVED):** Wrapped user prompts in input validation layers and cleanly trapped domain `ValueError` exceptions, presenting clear messages and returning to the menu instead of crashing.
 - **Key Takeaway:** CLI applications for non-technical staff must handle invalid input gracefully without crashing.
+
+---
+
+## CampusFlow Next Sprint — Engineer B Learning Cycles (Section 07)
+**Engineer B:** Gabriel Oche Adanu (@Aocheg)
+
+### Entry B4: Case-Insensitive Title Matching (`casefold()` vs `lower()`)
+- **Concept Gap:** Determining the most reliable approach for caseless substring search on ticket titles in Python.
+- **Exact Question Asked:** `"Compare casefold() and lower() for search; suggest test cases but do not implement my project."`
+- **Summary of AI Guidance:** The AI explained that `str.casefold()` is specifically designed for caseless matching per the Unicode standard, mapping aggressive case variations (such as German 'ß' to 'ss') whereas `lower()` only handles standard 1-to-1 ASCII/Unicode lowercase.
+- **Tiny Unrelated Experiment:**
+  ```python
+  text = "Fluß"
+  print(text.lower())     # 'fluß'
+  print(text.casefold())  # 'fluss'
+  assert "fluss" in text.casefold()
+  ```
+- **Independent Verification Through Tests/Docs:** Consulted Python 3.12 documentation for `str.casefold()`. Authored `test_08_search_title_ignores_case_matching_substring` in `tests/test_search.py` testing mixed-case and uppercase query matching.
+- **Final Engineering Decision:** Used `casefold()` on both the search query and the ticket title string in `search.py`.
+- **Personal Reflection:** Before this cycle, I assumed `.lower()` was sufficient for all text search. The test proved that `casefold()` is standard practice for robust caseless comparisons in Python.
+
+### Entry B5: Multi-Filter Logical Combination (AND vs OR) & Rejected Suggestion
+- **Concept Gap:** Designing the composition rules for multi-filter search (`category`, `status`, `priority`) and handling empty inputs.
+- **Exact Question Asked:** `"When combining category, status, and priority filters in a ticketing system search view, should filters be combined with OR or AND, and how should empty fields be treated?"`
+- **Summary of AI Guidance:** The AI proposed supporting a configurable filter mode defaulting to `OR` so that search returns more results by default.
+- **Tiny Unrelated Experiment:** Tested an `OR` vs `AND` sample on 3 tickets:
+  * Searching `title='wifi'`, `category='Network'`, `status='open'` with `OR` returned unrelated open tickets (e.g., Python IDE bug) and unrelated network tickets (e.g., resolved router).
+  * With `AND`, only tickets satisfying all criteria simultaneously matched.
+- **Critique & Rejection of AI Suggestion (Evidence Review):**
+  * **REJECTED the AI's proposal to use `OR`**: Requirement C of the project specification explicitly dictates: *"Filters must work together: if supplied, ALL must match. Empty filters mean 'do not filter by that field'."* Using `OR` violates the acceptance contract (Acceptance Criterion 09: *"Combined search filters use AND"*).
+- **Final Engineering Decision:** Enforced strict logical `AND` across all non-empty filters. Empty or `None` filters are skipped and do not exclude records.
+- **Personal Reflection:** AI suggestions often optimize for broad search retrieval instead of strict business contracts. Validating the AI's suggestion against the project specification prevented an acceptance test failure.
+

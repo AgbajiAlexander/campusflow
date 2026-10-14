@@ -1,5 +1,6 @@
 """reports.py - Work queue ordering and analytical reporting.
-Implements F5 (Work Queue) and F6 (Reports) per PRD Section 8.
+Implements F5 (Work Queue) and F6 (Reports) per PRD Section 8,
+extended for Requirement D (Trustworthy quality insights).
 """
 
 from typing import Any, Dict, List
@@ -33,7 +34,7 @@ def get_work_queue(tickets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def generate_report(tickets: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Generate summary metrics and breakdowns by status and priority.
+    """Generate summary metrics and breakdowns by status, priority, and category.
     Safely handles the zero-tickets case without errors or division by zero.
     """
     total = len(tickets)
@@ -64,8 +65,38 @@ def generate_report(tickets: List[Dict[str, Any]]) -> Dict[str, Any]:
         else:
             priority_counts[priority] = priority_counts.get(priority, 0) + 1
 
+    by_category: Dict[str, int] = {}
+    for t in tickets:
+        category = t.get("category", "Other")
+        by_category[category] = by_category.get(category, 0) + 1
+
+    unresolved = status_counts.get("open", 0) + status_counts.get("in_progress", 0)
+    resolved = status_counts.get("resolved", 0)
+    resolution_percentage = (resolved / total * 100) if total > 0 else 0.0
+
     return {
         "total": total,
         "by_status": status_counts,
         "by_priority": priority_counts,
+        "by_category": by_category,
+        "unresolved": unresolved,
+        "resolved": resolved,
+        "resolution_percentage": round(resolution_percentage, 1),
     }
+
+
+def sort_search_results(matching_tickets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Requirement D's separate optional view: sort SEARCH results by
+    priority then ticket ID -- same ordering rule as the work queue, but
+    deliberately a different function over a different input (search
+    results, which may include resolved tickets), so it never silently
+    replaces or is confused with get_work_queue(), which must stay
+    OPEN-tickets-only and untouched.
+    """
+    def sort_key(ticket: Dict[str, Any]):
+        prio = ticket.get("priority", "low").strip().lower()
+        rank = PRIORITY_RANKS.get(prio, 99)
+        num_id = extract_numeric_id(ticket.get("id", ""))
+        return (rank, num_id)
+
+    return sorted(matching_tickets, key=sort_key)
