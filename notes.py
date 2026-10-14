@@ -91,3 +91,4 @@ def view_notes(tickets_list: List[Dict[str, Any]], ticket_id: str) -> List[Dict[
     if ticket is None:
         raise ValueError(f"Ticket with ID '{ticket_id}' not found.")
     return sorted(ticket.get("notes", []), key=lambda n: extract_note_numeric_id(n.get("note_id", "")))
+
