@@ -1,4 +1,4 @@
-# CampusFlow Baseline Diagnostic Check
+# CampusFlow-Next Baseline Diagnostic Check
 **Date:** October 14, 2026  
 **Audited Commit / Version:** CampusFlow v1 (Commit `69357f5`)  
 **Engineer:** Engineer B (Gabriel Oche Adanu, @Aocheg)
