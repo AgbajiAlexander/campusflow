@@ -21,7 +21,7 @@
 - **Engineer A Feature Branch:** `feat/21-validation-and-notes` — [PR #4](https://github.com/eliodeh/campusflow-next/pull/4)
 - **Engineer B Feature Branch:** `feat/22-search-and-insights` — [PR #6](https://github.com/eliodeh/campusflow-next/pull/6)
 - **Main Integration Branch:** `main`
-- **Primary Remote:** `https://github.com/AgbajiAlexander/campus-flow-next.git`
+- **Primary Remote:** `https://github.com/AgbajiAlexander/campusflow.git`
 
 ---
 
@@ -31,7 +31,7 @@ campus-flow-next runs on **Python 3.10+** and relies **exclusively on the Python
 
 ### 1. Fresh Clone Setup
 ```bash
-git clone https://github.com/AgbajiAlexander/campus-flow-next.git
+git clone https://github.com/AgbajiAlexander/campusflow.git
 cd campus-flow-next
 ```
 
