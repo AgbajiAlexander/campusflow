@@ -1,86 +1,10 @@
-## Interaction #3 — Rejecting an AI suggestion to use a list-of-rules engine
+# AI Learning Log — CampusFlow & CampusFlow-Next Sprint
 
-**Problem:**
-I was writing the priority engine and asked the AI for a cleaner way to
-structure the four rules. The AI suggested replacing the if/elif cascade
-with a list of `(rule_function, priority)` tuples and iterating through it.
-
-**My initial understanding:**
-The AI's suggestion looked elegant — fewer lines of code, and easy to add
-new rules later by just appending to a list.
-
-**Prompt to AI:**
-"Refactor this priority function to avoid long if/elif chains. Show me a
-more scalable approach."
-
-**Useful AI guidance:**
-The AI returned this refactor:
-
-```python
-def is_critical(urgency, users):
-    return urgency == "high" and users >= 10
-
-def is_high(urgency, users):
-    return urgency == "high" or users >= 10
-
-def is_medium(urgency, users):
-    return urgency == "medium" or users >= 3
-
-PRIORITY_RULES = [
-    (is_critical, "critical"),
-    (is_high, "high"),
-    (is_medium, "medium"),
-]
-
-def calculate_priority(urgency, affected_users):
-    for rule, priority in PRIORITY_RULES:
-        if rule(urgency, affected_users):
-            return priority
-    return "low"
-
-
-My independent experiment:
-I saved the AI's version in a scratch file and ran my 9 tests against it.
-All 9 passed. The behaviour was identical to my if/elif version. But then
-I tried to explain the code out loud as if I were in the technical demo.
-I could not quickly explain why the rules were stored as tuples of
-function references, or why the order inside PRIORITY_RULES mattered.
-During the hand-tracing practice I had been doing, the if/elif version
-let me read rule 1, then rule 2, then rule 3, in the same order the spec
-lists them. The AI's version hides that order inside a list, one level of
-indirection away.
-
-Verification source:
-I re-read the Python docs on lists and tuple unpacking, and I asked
-myself: "Can I explain this code at the whiteboard in 60 seconds?" The
-answer was no. I also re-read the spec to confirm that the cascade order
-is the core requirement — which meant the code should make that order
-visually obvious.
-
-Decision:
-Rejected — I kept the explicit if/elif cascade. The AI's version was
-technically correct and my 9 tests confirmed it behaved the same, but it
-was harder for me to explain and defend under time pressure. The if/elif
-version maps one-to-one onto the spec's rule list, which makes it easy to
-review, trace, and debug. Learning value: elegance is not the same as
-clarity.
-
-Related file/commit:
-campusflow/tickets.py — final calculate_priority()
-Commit: 104101c
-
-What I can now explain without AI:
-AI can suggest clever refactors, but "clever" is not always the right
-goal. Code that maps directly onto the requirements — even if more
-verbose — is easier to defend, easier to trace, and less likely to hide
-bugs. I chose readability instead of cleverness.
-# AI Learning Log — CampusFlow Sprint
-
-This log documents prompt-engineering interactions, human verification, and critical review cycles during the development of CampusFlow CLI in accordance with **PRD Section 11** (minimum 3 entries per engineer, with mandatory correction/rejection cycles).
+This log documents prompt-engineering interactions, human verification, and critical review cycles during the development of CampusFlow and CampusFlow-Next CLI in accordance with **PRD Section 11** and **Section 07 of the CampusFlow Next Sprint Guide** (minimum 2 meaningful learning cycles per engineer, including independent verification and mandatory correction/rejection cycles).
 
 ---
 
-## Engineer A: Alexander Agbaji (@AgbajiAlexander) — Core Data, Priority Engine & Persistence
+## Engineer A: Alexander Agbaji (@AgbajiAlexander) — Ticket Safety, Validation & Storage
 
 ### Entry A1: Priority Engine Rule Hierarchy
 - **Context & Goal:** Generate the priority engine algorithm from PRD Section 7.
@@ -107,65 +31,82 @@ This log documents prompt-engineering interactions, human verification, and crit
 - **Correction Applied (IMPROVED):** Implemented regex/numeric extraction (`extract_numeric_id`) that scans for `max(numeric_ids)` across all existing tickets and increments from the highest observed ID.
 - **Key Takeaway:** Never use collection lengths as surrogate sequence generators for persistent entity IDs.
 
----
-
-## Engineer B: Eli Odeh (@eliodeh) — Workflow, Analytics, Work Queue & CLI
-
-### Entry B1: Workflow Transition Validation & Unassigned Guard
-- **Context & Goal:** Implement lifecycle transitions (`open -> in_progress -> resolved`) and locking in `workflow.py`.
-- **Initial AI Suggestion:** The AI proposed allowing transitions based solely on input strings without inspecting current ticket attributes.
-- **Verification & Critical Evaluation (CORRECTED):** PRD Section 8 (F4) explicitly states: *"An unassigned ticket cannot move to in_progress (must be assigned first)"* and *"A resolved ticket is locked — it can only change again after an explicit reopen action."*
-- **Correction Applied:** Added explicit assertion checks:
-  1. `if target == "in_progress" and not ticket.get("assigned_to"): raise ValueError(...)`
-  2. `if current == "resolved": raise ValueError("Ticket is locked. Reopen required.")`
-  3. Created dedicated `reopen_ticket()` function.
-- **Key Takeaway:** Workflow state machines require domain invariants that check both current status and related metadata (assignee existence) before permitting transitions.
-
-### Entry B2: Work Queue Ordering and Numeric Tie-Breaking
-- **Context & Goal:** Build the F5 Work Queue ordering logic.
-- **Initial AI Suggestion:** The AI suggested sorting by `ticket['priority']` alphabetically and then by `ticket['id']` as strings.
-- **Verification & Critical Evaluation (CORRECTED):** 
-  1. Alphabetical sorting ranks `critical` (c), `high` (h), `low` (l), `medium` (m), which puts `low` before `medium`! The correct priority order is `critical -> high -> medium -> low`.
-  2. String sorting of IDs fails when ticket numbers cross digit thresholds (e.g., `'T100' < 'T20'`).
-- **Correction Applied:** Defined an explicit priority rank map `{'critical': 0, 'high': 1, 'medium': 2, 'low': 3}` and extracted numeric ID integers for tie-breaking: `sort_key = (rank, extract_numeric_id(t['id']))`.
-- **Key Takeaway:** Priority levels must be mapped to discrete monotonic ranks, and IDs must be sorted by integer value rather than lexicographical string comparison.
-
-### Entry B3: Interactive CLI Error Resilience
-- **Context & Goal:** Implement `cli.py` menu and input loop without crashing on erroneous user inputs.
-- **Initial AI Suggestion:** The AI suggested converting user input directly with `int(input("Affected users: "))` inside the menu loop without error handling.
-- **Verification & Critical Evaluation:** Non-integer inputs caused unhandled `ValueError` crashes, terminating the CLI session and dropping unpersisted memory state.
-- **Correction Applied (IMPROVED):** Wrapped user prompts in input validation layers and cleanly trapped domain `ValueError` exceptions, presenting clear messages and returning to the menu instead of crashing.
-- **Key Takeaway:** CLI applications for non-technical staff must handle invalid input gracefully without crashing.
+### Entry A4: Rejecting AI Suggestion to Use a List-of-Rules Engine
+- **Context & Goal:** Cleaner structure for the 4 priority rules in `tickets.py`.
+- **Initial AI Suggestion:** The AI suggested replacing the if/elif cascade with a list of `(rule_function, priority)` tuples and iterating through it.
+- **Tiny Unrelated Experiment:** Saved AI's version in a scratch script and ran 9 unit tests. All passed. However, when trying to explain the code out loud as if in a live technical defense, the indirect list hid the clear sequence order of the specification.
+- **Correction Applied (REJECTED):** Kept the explicit if/elif cascade. Elegance is not clarity; code mapping directly onto specification requirements is easier to trace, defend, and audit.
+- **Key Takeaway:** Readability and direct alignment with requirements outweigh clever abstraction.
 
 ---
 
-## CampusFlow Next Sprint — Engineer B Learning Cycles (Section 07)
-**Engineer B:** Gabriel Oche Adanu (@Aocheg)
+## Engineer B: Gabriel Oche Adanu (@Aocheg) — Search, Reporting Analytics, Notes CLI & Engineering Understanding Check
 
-### Entry B4: Case-Insensitive Title Matching (`casefold()` vs `lower()`)
+### Entry B1: Case-Insensitive Title Matching (`casefold()` vs `lower()`)
 - **Concept Gap:** Determining the most reliable approach for caseless substring search on ticket titles in Python.
 - **Exact Question Asked:** `"Compare casefold() and lower() for search; suggest test cases but do not implement my project."`
-- **Summary of AI Guidance:** The AI explained that `str.casefold()` is specifically designed for caseless matching per the Unicode standard, mapping aggressive case variations (such as German 'ß' to 'ss') whereas `lower()` only handles standard 1-to-1 ASCII/Unicode lowercase.
+- **Summary of AI Guidance:** The AI explained that `str.casefold()` is specifically designed for caseless matching per the Unicode standard (Section 3.13 of Unicode), mapping aggressive case variations (such as German 'ß' to 'ss', Greek sigma, etc.) whereas `lower()` only handles standard 1-to-1 ASCII/Unicode lowercase.
 - **Tiny Unrelated Experiment:**
   ```python
   text = "Fluß"
   print(text.lower())     # 'fluß'
   print(text.casefold())  # 'fluss'
   assert "fluss" in text.casefold()
+  assert "FLUSS".casefold() == "fluss"
   ```
-- **Independent Verification Through Tests/Docs:** Consulted Python 3.12 documentation for `str.casefold()`. Authored `test_08_search_title_ignores_case_matching_substring` in `tests/test_search.py` testing mixed-case and uppercase query matching.
-- **Final Engineering Decision:** Used `casefold()` on both the search query and the ticket title string in `search.py`.
-- **Personal Reflection:** Before this cycle, I assumed `.lower()` was sufficient for all text search. The test proved that `casefold()` is standard practice for robust caseless comparisons in Python.
+- **Independent Verification Through Tests/Docs:** Consulted Python 3.12 official documentation for `str.casefold()`. Authored `test_08_search_title_ignores_case_matching_substring` in `tests/test_search.py` testing mixed-case and uppercase query matching.
+- **Final Engineering Decision:** Used `casefold()` on both the search query and the ticket title string in `search.py` (`query.strip().casefold() in t["title"].casefold()`).
+- **Personal Reflection (Section 07 Format):**
+  - *What did I believe before?* I believed `.lower()` was completely sufficient for all caseless search requirements in Python.
+  - *What did AI explain?* The AI explained that `.lower()` is locale/case-mapping oriented, whereas `casefold()` removes all case distinctions according to the Unicode standard.
+  - *Which claim did I test?* I tested caseless matching on strings with non-ASCII casing characters (`"Fluß"` matching `"fluss"`).
+  - *What did the test show?* The test confirmed `"fluss" in "Fluß".casefold()` is `True`, whereas `"fluss" in "Fluß".lower()` is `False`.
+  - *What did I change in MY code?* In `search.py`, I replaced all `.lower()` calls for title query matching with `.casefold()`.
+  - *Which test guards that learning against future regression?* `tests/test_search.py::TestSearchTickets::test_08_search_title_ignores_case_matching_substring`.
+  - *Could I explain this choice without AI in the room?* Yes: `casefold()` is Python's standard method for Unicode-compliant caseless comparison, whereas `lower()` only transforms characters to lowercase without handling aggressive Unicode folding.
 
-### Entry B5: Multi-Filter Logical Combination (AND vs OR) & Rejected Suggestion
-- **Concept Gap:** Designing the composition rules for multi-filter search (`category`, `status`, `priority`) and handling empty inputs.
+### Entry B2: Multi-Filter Logical Combination (AND vs OR) & Rejected Suggestion
+- **Concept Gap:** Designing composition rules for multi-filter search (`category`, `status`, `priority`) and handling empty inputs.
 - **Exact Question Asked:** `"When combining category, status, and priority filters in a ticketing system search view, should filters be combined with OR or AND, and how should empty fields be treated?"`
-- **Summary of AI Guidance:** The AI proposed supporting a configurable filter mode defaulting to `OR` so that search returns more results by default.
+- **Summary of AI Guidance:** The AI proposed supporting a configurable filter mode defaulting to `OR` so that search returns more results by default for end users.
 - **Tiny Unrelated Experiment:** Tested an `OR` vs `AND` sample on 3 tickets:
-  * Searching `title='wifi'`, `category='Network'`, `status='open'` with `OR` returned unrelated open tickets (e.g., Python IDE bug) and unrelated network tickets (e.g., resolved router).
-  * With `AND`, only tickets satisfying all criteria simultaneously matched.
+  - Ticket 1: `title='Wi-Fi router'`, `category='Network'`, `status='open'`
+  - Ticket 2: `title='Python IDE'`, `category='Software'`, `status='open'`
+  - Ticket 3: `title='Network cabling'`, `category='Network'`, `status='resolved'`
+  - Searching `title='wifi'`, `category='Network'`, `status='open'`:
+    - With `OR`: Returns all 3 tickets (Ticket 2 matches `status='open'`, Ticket 3 matches `category='Network'`).
+    - With `AND`: Returns strictly Ticket 1.
 - **Critique & Rejection of AI Suggestion (Evidence Review):**
-  * **REJECTED the AI's proposal to use `OR`**: Requirement C of the project specification explicitly dictates: *"Filters must work together: if supplied, ALL must match. Empty filters mean 'do not filter by that field'."* Using `OR` violates the acceptance contract (Acceptance Criterion 09: *"Combined search filters use AND"*).
-- **Final Engineering Decision:** Enforced strict logical `AND` across all non-empty filters. Empty or `None` filters are skipped and do not exclude records.
-- **Personal Reflection:** AI suggestions often optimize for broad search retrieval instead of strict business contracts. Validating the AI's suggestion against the project specification prevented an acceptance test failure.
+  - **REJECTED the AI's proposal to use `OR`**: Requirement C of the project specification explicitly dictates: *"Filters must work together: if supplied, ALL must match. Empty filters mean 'do not filter by that field'."* Using `OR` violates the acceptance contract (Acceptance Criterion 09: *"Combined search filters use AND"*).
+- **Final Engineering Decision:** Enforced strict logical `AND` across all non-empty filters in `search.py`. Empty, whitespace, or `None` filters are skipped and do not exclude records.
+- **Personal Reflection (Section 07 Format):**
+  - *What did I believe before?* I wondered whether users would prefer broader search results via `OR` matching.
+  - *What did AI explain?* The AI suggested making `OR` the default to maximize recall.
+  - *Which claim did I test?* I tested filtering precision with sample tickets matching partial criteria.
+  - *What did the test show?* `OR` returned false positives (e.g. resolved tickets when the user explicitly filtered for `open`).
+  - *What did I change in MY code?* In `search.py`, I implemented sequential filtering where each supplied criteria narrows the matching list (`if cat and t["category"] != cat: continue`).
+  - *Which test guards that learning against future regression?* `tests/test_search.py::TestSearchTickets::test_09_combined_search_filters_use_and`.
+  - *Could I explain this choice without AI in the room?* Yes: Campus support staff searching for specific active issues require strict narrowing (intersection / AND) so they do not receive hundreds of irrelevant resolved or cross-department tickets.
 
+### Entry B3: Division-by-Zero Safety in Analytics Reports
+- **Concept Gap:** Ensuring reports handle an empty ticket database safely without crashes.
+- **Exact Question Asked:** `"How should an empty dataset resolution percentage be handled in pure calculation functions?"`
+- **Summary of AI Guidance:** The AI suggested using `try...except ZeroDivisionError` around `resolved / total * 100` and returning `0.0`.
+- **Tiny Unrelated Experiment:**
+  ```python
+  total = 0
+  resolved = 0
+  # Guard approach
+  pct = (resolved / total * 100) if total > 0 else 0.0
+  assert pct == 0.0
+  ```
+- **Independent Verification Through Tests/Docs:** Authored `test_10_empty_dataset_resolution_percentage_is_zero_not_crash` in `tests/test_reports.py`.
+- **Final Engineering Decision:** Used an explicit defensive ternary guard `(resolved / total * 100) if total > 0 else 0.0` rather than exception-driven control flow, adhering to pure function design.
+- **Personal Reflection (Section 07 Format):**
+  - *What did I believe before?* I considered letting `ZeroDivisionError` be caught in the CLI presentation layer.
+  - *What did AI explain?* The AI pointed out that business logic functions should guarantee valid return shapes and invariants regardless of input size.
+  - *Which claim did I test?* Tested passing `[]` to `generate_report()`.
+  - *What did the test show?* The pure guard returned valid numeric `0.0` and zeroed breakdown dictionaries without throwing.
+  - *What did I change in MY code?* Guarded the percentage calculation in `reports.py` and rounded to 1 decimal place.
+  - *Which test guards that learning against future regression?* `tests/test_reports.py::TestReportsAndWorkQueue::test_10_empty_dataset_resolution_percentage_is_zero_not_crash`.
+  - *Could I explain this choice without AI in the room?* Yes: Business logic functions should uphold contracts that never raise runtime exceptions on legitimate boundary domain inputs like empty collections.

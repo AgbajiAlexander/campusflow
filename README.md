@@ -157,12 +157,13 @@ campusflow/
 │   ├── test_understanding.py  # Quiz input rejection, scoring logic, question bank isolation
 │   ├── test_validation.py     # Centralized ticket and transition validation tests
 │   ├── test_notes.py          # Structured note creation, resolved ticket rejection, ID continuity
-│   └── test_bug_hunters.py    # Cross-engineer bug hunter edge case tests
+│   └── test_bug_hunter_by_A.py# Cross-engineer bug hunter edge cases (A hunting B, B hunting A)
 ├── docs/                      # Sprint governance and engineering logs
 │   ├── baseline-check.md      # Section 02 diagnostic baseline results and action items
 │   ├── ai-learning-log.md     # Documented AI learning cycles with verified corrections
 │   ├── design-decisions.md    # Architecture and module ownership decisions
-│   └── pr-reviews.md          # Multi-engineer code review records and approvals
+│   ├── pr-reviews.md          # Multi-engineer code review records and approvals
+│   └── reflections.md         # Section 11 individual reflections & live defense notes
 ├── data/                      # Local runtime data directory (ignored by git)
 │   └── tickets.json           # Runtime storage file
 ├── .gitignore                 # Standard exclusions (runtime data, caches, IDE files)
@@ -194,4 +195,4 @@ python3 -m unittest discover -s tests -v
 - **12. Save/load continuity:** Preserves ticket fields, notes, and sequential note IDs.
 - **13. Corrupt/duplicate JSON rejected:** Safely rejected without memory loss.
 - **14. CLI Understanding Check:** Rejects invalid choices and scores accurately.
-- **Extra Bug-Hunter Tests:** Cross-module edge cases in `tests/test_bug_hunters.py`.
+- **Extra Bug-Hunter Tests:** Cross-module edge cases in `tests/test_bug_hunter_by_A.py` (Engineer A hunting `search.py`, Engineer B hunting `notes.py`).

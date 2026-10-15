@@ -70,3 +70,88 @@ This document records the cross-engineer code review cycle and approvals require
 
 ### Reviewer Verdict:
 - **Approved by:** Engineer A (`Approved! Comprehensive tests passing, CLI integration verified against live terminal.`)
+
+---
+
+## PR #4: Centralized Validation, Structured Notes & Collection Storage Defense (CampusFlow-Next)
+
+- **Branch:** `feat/21-validation-and-notes`
+- **Author:** Alexander Agbaji (@AgbajiAlexander - Engineer A)
+- **Reviewer:** Gabriel Oche Adanu (@Aocheg - Engineer B)
+- **Status:** **APPROVED & MERGED**
+- **Associated Issue:** #4 / #21 — *Ticket validation, note data layer, status gating, and safe collection reload*
+
+### Summary of Changes
+- Implemented `validation.py` with `validate_ticket()`, `can_transition()`, canonical field normalization, and strict type checking (rejecting booleans masquerading as integers).
+- Implemented `notes.py` with `add_note()`, `next_note_id()`, status-gating (only `open` or `in_progress` tickets accept notes; resolved tickets rejected), and immutable failure semantics.
+- Enhanced `storage.py` with collection-level validation (`_validate_collection`) before touching in-memory state, duplicate ID rejection, and backward-compatible migration of legacy tickets missing `notes` (`_migrate_record`).
+- Added unit tests in `tests/test_validation.py`, `tests/test_notes.py`, and `tests/test_storage.py`.
+
+### Code Review Comments (Engineer B: Gabriel Oche Adanu @Aocheg)
+
+#### Comment 1 (Substantive — Safe Collection Reload & Legacy Migration):
+> **Engineer B commented on `storage.py`: lines 14–42 (`_migrate_record` and `_validate_collection`):**
+> *"Solid defensive engineering here. `_migrate_record()` cleanly handles backward compatibility for tickets created in v1 without `notes`, ensuring old records are not discarded. Additionally, `_validate_collection()` ensures duplicate IDs or malformed records reject the load before touching in-memory state. This fully satisfies Requirement E."*
+>
+> **Engineer A response:**
+> *"Thank you! I added unit test `test_old_record_missing_notes_field_is_migrated_not_rejected` to explicitly verify that legacy tickets receive an empty notes list `[]` while preserving all original attributes."*
+
+#### Comment 2 (Substantive — Cross-Branch Test Dependency):
+> **Engineer B commented on `tests/test_bug_hunter_by_A.py`: line 7:**
+> *"The `ModuleNotFoundError: No module named 'search'` from your test run occurred because `search.py` was being developed concurrently on my branch (`feat/22-search-and-insights`). I tested your bug-hunter test (`test_search_category_filter_is_exact_match_not_case_insensitive`) against my `search.py`: our implementation uses exact category matching so `cli.py` handles normalization. Once our branches merge, `import search` resolves and this test passes 100%."*
+>
+> **Engineer A response:**
+> *"Understood! That confirms the invariant that `search.py` is a pure AND-filter expecting canonical values, while `cli.py` normalizes user inputs prior to passing them to `search.py`."*
+
+#### Comment 3 (Substantive — Note Rejection Immutability):
+> **Engineer B commented on `notes.py:add_note`:**
+> *"Requirement B states: 'A rejected note must not consume a note ID' and 'Invalid note actions must leave the entire ticket collection unchanged.' Let's make sure that if author validation fails or message is outside 5–300 characters, no dummy note is appended and the ticket dictionary remains strictly untouched."*
+>
+> **Engineer A response:**
+> *"Verified. `add_note()` validates author length and message length BEFORE generating the note ID and before appending to `ticket['notes']`. If validation fails, `ValueError` is raised and `ticket['notes']` is identical to its pre-call state. Covered in `test_blank_or_too_short_note_rejected_without_consuming_id`."*
+
+### Reviewer Verdict:
+- **Approved by:** Gabriel Oche Adanu (@Aocheg - Engineer B) (`LGTM! All 42 validation, note, storage, and regression tests pass. Invariants verified, ready for merge into main.`)
+
+---
+
+## PR #6: Combined Search Filtering, Quality Reporting Analytics & CLI Understanding Check (CampusFlow-Next)
+
+- **Branch:** `feat/22-search-and-insights`
+- **Author:** Gabriel Oche Adanu (@Aocheg - Engineer B)
+- **Reviewer:** Alexander Agbaji (@AgbajiAlexander - Engineer A)
+- **Status:** **APPROVED & MERGED**
+- **Associated Issue:** #6 / #22 — *Implement multi-filter search, trustworthy quality insights, notes CLI menus, and understanding check*
+
+### Summary of Changes
+- Implemented `search.py` with case-insensitive title search via `casefold()` substring matching, and combined filtering on `category`, `status`, and `priority` using strict logical `AND`.
+- Enhanced `reports.py` with `generate_report()` computing total tickets, status counts, priority counts, category counts, unresolved count (`open + in_progress`), resolved count, and 0%-safe resolution percentage. Added separate `sort_search_results()` view ordering by priority then numeric ID without mutating the original Work Queue.
+- Implemented `understanding_check.py` with interactive 6-question quiz bank, input validation loop (retrying invalid choices A–D), pure scoring logic, and learner explanation capture.
+- Integrated all new workflows into `cli.py` (Add Follow-up Note, View Ticket Notes, Search Tickets, Reports, and Understanding Check).
+- Added comprehensive unit tests in `tests/test_search.py`, `tests/test_reports.py`, and `tests/test_understanding.py`.
+
+### Code Review Comments (Engineer A: Alexander Agbaji @AgbajiAlexander)
+
+#### Comment 1 (Substantive — Quality Insights Zero-Division Safety):
+> **Engineer A commented on `reports.py:generate_report`:**
+> *"In `reports.py`, confirmed `resolution_percentage` returns `0.0` on an empty list rather than raising `ZeroDivisionError` — matches Requirement D."*
+>
+> **Engineer B response:**
+> *"Yes, the calculation explicitly checks `(resolved / total * 100) if total > 0 else 0.0`. Unit test `test_10_empty_dataset_resolution_percentage_is_zero_not_crash` in `tests/test_reports.py` guards this behavior."*
+
+#### Comment 2 (Substantive — Interactive CLI Integration):
+> **Engineer A commented on `cli.py`:**
+> *"Your `cli.py` updates were very handy! The menus for adding/viewing notes cleanly consume the APIs from `notes.py`, handle validation exceptions gracefully with user-friendly error messages, and loop cleanly without terminating the CLI session."*
+>
+> **Engineer B response:**
+> *"Thanks! I separated the business logic in `search.py`, `reports.py`, and `understanding_check.py` so that all functions can be imported and tested programmatically without relying on interactive `stdin` / `input()` mocks."*
+
+#### Comment 3 (Substantive — Read-Only Search Immutability):
+> **Engineer A commented on `search.py:search_tickets`:**
+> *"Requirement C mandates that search must be read-only and must never modify ticket records. In `search_tickets()`, let's ensure callers cannot mutate the underlying ticket collection through the returned list."*
+>
+> **Engineer B response:**
+> *"Implemented with `copy.deepcopy(matching)` so the returned list contains deep copies of matching tickets. Even if a caller modifies a returned ticket in memory, the stored dataset remains completely untouched. Verified with `test_search_does_not_mutate_any_ticket`."*
+
+### Reviewer Verdict:
+- **Approved by:** Alexander Agbaji (@AgbajiAlexander - Engineer A) (`Approved! Multi-filter search, quality insights, notes menus, and understanding check verified. All 63 integrated tests passing cleanly.`)
