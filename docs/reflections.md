@@ -1,4 +1,4 @@
-# Engineering Reflections & Defense Notes — CampusFlow-Next
+# Engineering Reflections & Defense Notes — campus-flow-next
 
 This document fulfills the submission requirements of **Section 11 (Individual Engineering Reflections)** and provides preparation notes for the **Live Defense Prompts (Section 09)** and **Engineer Sprint Questions (Section 04)**.
 

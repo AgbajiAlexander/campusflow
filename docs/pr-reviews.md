@@ -73,7 +73,7 @@ This document records the cross-engineer code review cycle and approvals require
 
 ---
 
-## PR #4: Centralized Validation, Structured Notes & Collection Storage Defense (CampusFlow-Next)
+## PR #4: Centralized Validation, Structured Notes & Collection Storage Defense (campus-flow-next)
 
 - **Branch:** `feat/21-validation-and-notes`
 - **Author:** Alexander Agbaji (@AgbajiAlexander - Engineer A)
@@ -115,7 +115,7 @@ This document records the cross-engineer code review cycle and approvals require
 
 ---
 
-## PR #6: Combined Search Filtering, Quality Reporting Analytics & CLI Understanding Check (CampusFlow-Next)
+## PR #6: Combined Search Filtering, Quality Reporting Analytics & CLI Understanding Check (campus-flow-next)
 
 - **Branch:** `feat/22-search-and-insights`
 - **Author:** Gabriel Oche Adanu (@Aocheg - Engineer B)

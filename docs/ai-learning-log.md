@@ -1,6 +1,6 @@
-# AI Learning Log — CampusFlow & CampusFlow-Next Sprint
+# AI Learning Log — campus-flow-next Sprint
 
-This log documents prompt-engineering interactions, human verification, and critical review cycles during the development of CampusFlow and CampusFlow-Next CLI in accordance with **PRD Section 11** and **Section 07 of the CampusFlow Next Sprint Guide** (minimum 2 meaningful learning cycles per engineer, including independent verification and mandatory correction/rejection cycles).
+This log documents prompt-engineering interactions, human verification, and critical review cycles during the development of CampusFlow and campus-flow-next CLI in accordance with **PRD Section 11** and **Section 07 of the CampusFlow Next Sprint Guide** (minimum 2 meaningful learning cycles per engineer, including independent verification and mandatory correction/rejection cycles).
 
 ---
 

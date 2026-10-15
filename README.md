@@ -1,4 +1,4 @@
-# CampusFlow-Next — Campus IT Helpdesk Ticket Manager (CLI)
+# campus-flow-next — Campus IT Helpdesk Ticket Manager (CLI)
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Tests](https://img.shields.io/badge/tests-63%20passed-brightgreen.svg)]()
@@ -10,7 +10,7 @@
 
 ## 👥 Team & Sprint Details
 
-- **Product:** CampusFlow-Next
+- **Product:** campus-flow-next
 - **Sprint:** Guided Reliability, Search & Engineering Quality Sprint
 - **Engineering Pair:**
   - **Engineer A:** Alexander Agbaji ([@AgbajiAlexander](https://github.com/AgbajiAlexander)) — Ticket Safety, Validation & Storage
@@ -21,18 +21,18 @@
 - **Engineer A Feature Branch:** `feat/21-validation-and-notes` — [PR #4](https://github.com/eliodeh/campusflow-next/pull/4)
 - **Engineer B Feature Branch:** `feat/22-search-and-insights` — [PR #6](https://github.com/eliodeh/campusflow-next/pull/6)
 - **Main Integration Branch:** `main`
-- **Primary Remote:** `https://github.com/AgbajiAlexander/campusflow.git`
+- **Primary Remote:** `https://github.com/AgbajiAlexander/campus-flow-next.git`
 
 ---
 
 ## 🚀 Quick Start & Fresh Clone Setup
 
-CampusFlow-Next runs on **Python 3.10+** and relies **exclusively on the Python standard library** (no external pip dependencies needed).
+campus-flow-next runs on **Python 3.10+** and relies **exclusively on the Python standard library** (no external pip dependencies needed).
 
 ### 1. Fresh Clone Setup
 ```bash
-git clone https://github.com/AgbajiAlexander/campusflow.git
-cd campusflow
+git clone https://github.com/AgbajiAlexander/campus-flow-next.git
+cd campus-flow-next
 ```
 
 ### 2. Run the Automated Test Suite
@@ -136,7 +136,7 @@ Ticket priority is evaluated deterministically in strict sequential order:
 ## 📂 Project Directory Structure
 
 ```text
-campusflow/
+campus-flow-next/
 ├── cli.py                     # Interactive menu covering F1-F7 and Next-B, C, D, Understanding Check
 ├── main.py                    # Root CLI entry point
 ├── tickets.py                 # Core schema validation, sequential ID generator, Priority Engine

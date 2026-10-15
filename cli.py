@@ -19,7 +19,7 @@ except ImportError:
 
 def display_menu() -> None:
     print("\n" + "=" * 48)
-    print("   CampusFlow-Next — IT Helpdesk Ticket Manager ")
+    print("   campus-flow-next — IT Helpdesk Ticket Manager ")
     print("=" * 48)
     print(" 1. Create Ticket         (F1)")
     print(" 2. List All Tickets      (F2)")

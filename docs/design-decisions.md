@@ -88,14 +88,14 @@ CampusFlowTeamG/
 ## 6. GitHub Multi-Repo Collaboration Workflow
 
 To reflect the team's two-repository setup:
-1. `origin`: Upstream repository managed by Engineer A — Alexander Agbaji (`https://github.com/AgbajiAlexander/CampusFlow.git`).
-2. `fork`: Forked repository managed by Engineer B — Eli Odeh (`https://github.com/eliodeh/CampusFlow.git`).
+1. `origin`: Repository managed by Engineer A (Alexander Agbaji) and Engineer B (Gabriel Oche Adanu): `https://github.com/AgbajiAlexander/campus-flow-next.git`.
+2. `upstream/fork context`: Project originally initiated with Eli Odeh (`https://github.com/eliodeh/campusflow-next.git`), now independently continued as `campus-flow-next` on Alexander Agbaji's repository.
 3. Branches follow the required specification: `<type>/<issue-number>-<short-description>`.
 4. Pull Requests require cross-engineer reviews with substantive technical comments prior to merging into `main`.
 
 ---
 
-## 7. CampusFlow-Next Architectural & Invariant Decisions
+## 7. campus-flow-next Architectural & Invariant Decisions
 
 ### 7.1 Centralized Validation & Transition Predicates (Requirement A)
 - **Centralized Helper**: `validation.validate_ticket()` enforces schema rules in a single location, verifying mandatory keys, non-empty titles after stripping, canonical categories (`Network`, `Hardware`, `Software`, `Other`), canonical urgencies (`low`, `medium`, `high`), positive non-zero integers for `affected_users`, and legal statuses.
