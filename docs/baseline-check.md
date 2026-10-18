@@ -62,8 +62,8 @@ All 30 baseline tests pass cleanly without errors.
 
 ### Input 2: Mutating Assignment on a `resolved` Ticket
 * **Input:** Call `workflow.assign_ticket(resolved_ticket, "Staff Member")` on a ticket with `status: "resolved"`.
-* **Observed Result:** Mutation was permitted silently in v1!
-* **Finding:** Invariant gap identified. Resolved tickets must be locked against assignment changes unless explicitly reopened.
+* **Observed Result (Baseline v1):** Mutation was permitted silently in v1!
+* **Finding & Remediation:** Invariant gap identified and resolved. In CampusFlow-Next, `workflow.assign_ticket()` strictly enforces resolved locking: any attempt to assign or reassign a resolved ticket raises `ValueError` leaving the assignee untouched unless the ticket is explicitly reopened first. Guarded against regression by `tests/test_workflow.py::TestWorkflow::test_assign_resolved_ticket_rejected`.
 
 ### Input 3: Zero-Tickets Report Division Safety
 * **Input:** Call `reports.generate_report([])` with an empty ticket list.

@@ -8,9 +8,15 @@ from typing import Any, Dict
 def assign_ticket(ticket: Dict[str, Any], assignee_name: str) -> Dict[str, Any]:
     """Assign or reassign a ticket to a staff member.
     Rejects empty or whitespace-only staff names.
+    Locks resolved tickets: a resolved ticket cannot be assigned or reassigned unless reopened.
     """
     if not isinstance(ticket, dict):
         raise ValueError("Invalid ticket record.")
+    if ticket.get("status") == "resolved":
+        raise ValueError(
+            f"Cannot assign ticket {ticket.get('id', '')} because it is resolved (locked). "
+            "Reopen the ticket first before changing assignment."
+        )
     if not isinstance(assignee_name, str) or not assignee_name.strip():
         raise ValueError("Assignee name cannot be blank.")
     

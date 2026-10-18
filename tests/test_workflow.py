@@ -81,10 +81,17 @@ class TestWorkflow(unittest.TestCase):
         workflow.reopen_ticket(self.ticket)
         self.assertEqual(self.ticket["status"], "open")
 
-    def test_reopen_non_resolved_ticket_rejected(self):
-        """Reopening a ticket that is not resolved is rejected"""
-        with self.assertRaises(ValueError):
-            workflow.reopen_ticket(self.ticket)
+    def test_assign_resolved_ticket_rejected(self):
+        """Resolved tickets cannot be assigned or reassigned unless reopened."""
+        workflow.assign_ticket(self.ticket, "Alice")
+        workflow.transition_status(self.ticket, "in_progress")
+        workflow.transition_status(self.ticket, "resolved")
+
+        with self.assertRaises(ValueError) as ctx:
+            workflow.assign_ticket(self.ticket, "Bob")
+        self.assertIn("resolved", str(ctx.exception).lower())
+        # Ensure assignee remains unchanged
+        self.assertEqual(self.ticket["assigned_to"], "Alice")
 
 
 if __name__ == "__main__":

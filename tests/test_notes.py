@@ -50,6 +50,55 @@ class TestAddNote(unittest.TestCase):
         self.assertEqual(len(self.ticket["notes"]), 1)
         self.assertEqual(self.ticket["notes"][0]["note_id"], "N001")
 
+    def test_notes_persist_across_full_lifecycle_and_reloads(self):
+        """Integrated test: notes survive save, reload, resolve, reopen, and note counter continues."""
+        import os, tempfile, shutil, storage
+
+        temp_dir = tempfile.mkdtemp()
+        try:
+            store_file = os.path.join(temp_dir, "test_notes_lifecycle.json")
+            # 1. Add note and save
+            notes.add_note(self.tickets_list, self.ticket["id"], "Mentor A", "Initial diagnostic note")
+            storage.save_tickets(self.tickets_list, store_file)
+
+            # 2. Reload and transition to in_progress
+            loaded, err = storage.load_tickets(store_file)
+            self.assertIsNone(err)
+            t = loaded[0]
+            workflow.assign_ticket(t, "Engineer A")
+            workflow.transition_status(t, "in_progress")
+            notes.add_note(loaded, t["id"], "Engineer A", "Replaced cable and rebooted")
+            storage.save_tickets(loaded, store_file)
+
+            # 3. Reload and resolve
+            loaded2, err2 = storage.load_tickets(store_file)
+            self.assertIsNone(err2)
+            t2 = loaded2[0]
+            workflow.transition_status(t2, "resolved")
+            storage.save_tickets(loaded2, store_file)
+
+            # 4. Reload, verify locked notes while resolved
+            loaded3, err3 = storage.load_tickets(store_file)
+            self.assertIsNone(err3)
+            t3 = loaded3[0]
+            with self.assertRaises(ValueError):
+                notes.add_note(loaded3, t3["id"], "Mentor B", "Should fail on resolved")
+
+            # 5. Reopen, add third note, verify N003
+            workflow.reopen_ticket(t3)
+            n3 = notes.add_note(loaded3, t3["id"], "Mentor B", "Reopened for verification")
+            self.assertEqual(n3["note_id"], "N003")
+            self.assertEqual(len(t3["notes"]), 3)
+            storage.save_tickets(loaded3, store_file)
+
+            # 6. Final reload verification
+            final_loaded, final_err = storage.load_tickets(store_file)
+            self.assertIsNone(final_err)
+            self.assertEqual(len(final_loaded[0]["notes"]), 3)
+            self.assertEqual([n["note_id"] for n in final_loaded[0]["notes"]], ["N001", "N002", "N003"])
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
 
 class TestViewNotes(unittest.TestCase):
     def test_notes_returned_in_id_order(self):
