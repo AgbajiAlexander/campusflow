@@ -157,6 +157,21 @@ class TestStorage(unittest.TestCase):
         self.assertIsNone(err)
         self.assertEqual(loaded[0]["notes"], [])
 
+    def test_failed_reload_preserves_supplied_in_memory_tickets(self):
+        """Requirement 15: If load fails, supplied in-memory tickets are preserved intact."""
+        in_memory = [{"id": "T999", "title": "Memory Ticket", "status": "open"}]
+        # Create a corrupt storage file
+        os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+        with open(self.storage_path, "w", encoding="utf-8") as f:
+            f.write("{ invalid json")
+
+        # Calling load_tickets with existing_tickets preserves them
+        kept_tickets, err = storage.load_tickets(self.storage_path, existing_tickets=in_memory)
+        self.assertIsNotNone(err)
+        self.assertIs(kept_tickets, in_memory)
+        self.assertEqual(len(kept_tickets), 1)
+        self.assertEqual(kept_tickets[0]["id"], "T999")
+
 
 if __name__ == "__main__":
     unittest.main()

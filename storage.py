@@ -54,7 +54,10 @@ def _validate_collection(data: List[Any], filepath: str) -> Optional[str]:
     return None
 
 
-def load_tickets(filepath: str = DEFAULT_STORAGE_PATH) -> Tuple[List[Dict[str, Any]], Optional[str]]:
+def load_tickets(
+    filepath: str = DEFAULT_STORAGE_PATH,
+    existing_tickets: Optional[List[Dict[str, Any]]] = None,
+) -> Tuple[List[Dict[str, Any]], Optional[str]]:
     """Load tickets from JSON file.
 
     Returns:
@@ -64,37 +67,38 @@ def load_tickets(filepath: str = DEFAULT_STORAGE_PATH) -> Tuple[List[Dict[str, A
           returns (tickets_list, None).
         - If file is corrupt, malformed, or ANY record is invalid (duplicate
           ID, illegal status/category/urgency, malformed notes, etc.):
-          returns ([], error_message). Crucially, this does NOT overwrite or
-          wipe the file on disk, and the caller's existing in-memory ticket
-          list (if any) is left completely untouched -- see cli.main_loop(),
-          which only replaces its working list if error_message is None.
+          returns (fallback_tickets, error_message), where fallback_tickets
+          is existing_tickets (if provided) or [] (if not provided).
+          Crucially, this does NOT overwrite or wipe the file on disk,
+          and any supplied existing in-memory tickets are preserved intact.
     """
+    fallback = existing_tickets if existing_tickets is not None else []
     if not os.path.exists(filepath):
-        return [], None
+        return fallback, None
 
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read().strip()
             if not content:
-                return [], None
+                return fallback, None
             data = json.loads(content)
             if not isinstance(data, list):
                 err = f"Storage format error: Root element in '{filepath}' must be a JSON array."
-                return [], err
+                return fallback, err
 
             data = [_migrate_record(record) if isinstance(record, dict) else record for record in data]
 
             validation_error = _validate_collection(data, filepath)
             if validation_error:
-                return [], validation_error
+                return fallback, validation_error
 
             return data, None
     except json.JSONDecodeError as exc:
         err = f"Storage corruption detected in '{filepath}': {exc}. File retained intact."
-        return [], err
+        return fallback, err
     except Exception as exc:
         err = f"Unexpected error reading '{filepath}': {exc}."
-        return [], err
+        return fallback, err
 
 
 def save_tickets(tickets: List[Dict[str, Any]], filepath: str = DEFAULT_STORAGE_PATH) -> None:

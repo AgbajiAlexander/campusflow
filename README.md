@@ -1,7 +1,7 @@
 # campus-flow-next — Campus IT Helpdesk Ticket Manager (CLI)
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-63%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-66%20passed-brightgreen.svg)]()
 [![Standard Library](https://img.shields.io/badge/dependencies-none%20(stdlib)-orange.svg)](https://docs.python.org/3/library/)
 
 > A dependable, test-driven Python command-line application built for Learn2Earn campus staff to record, prioritize, search, validate, assign, track, and resolve IT support tickets with structured follow-up notes, disk persistence, and trustworthy analytics.
@@ -32,7 +32,7 @@ campus-flow-next runs on **Python 3.10+** and relies **exclusively on the Python
 ### 1. Fresh Clone Setup
 ```bash
 git clone https://github.com/AgbajiAlexander/campusflow.git
-cd campus-flow-next
+cd campusflow
 ```
 
 ### 2. Run the Automated Test Suite

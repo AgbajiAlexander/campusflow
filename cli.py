@@ -164,10 +164,10 @@ def handle_reopen_ticket(all_tickets: List[Dict[str, Any]], storage_path: str) -
 
 
 def handle_work_queue(all_tickets: List[Dict[str, Any]]) -> None:
-    print("\n--- Work Queue (F5 - Unresolved, Priority Order) ---")
+    print("\n--- Open Work Queue (F5 - Open Tickets, Priority Order) ---")
     queue = reports.get_work_queue(all_tickets)
     if not queue:
-        print("Work queue is empty! No active tickets pending.")
+        print("Work queue is empty! No open tickets pending.")
         return
     print_ticket_summary_table(queue)
 
