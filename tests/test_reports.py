@@ -10,11 +10,12 @@ import reports
 class TestReportsAndWorkQueue(unittest.TestCase):
 
     def test_work_queue_sorting_and_tie_breaking(self):
-        """Appendix A: Open-ticket queue sorted by priority, then numeric ID"""
+        """Appendix A: Open-ticket queue sorted by priority, then numeric ID (open-only)"""
         tickets_list = [
             {"id": "T005", "priority": "low", "status": "open"},
             {"id": "T003", "priority": "high", "status": "open"},
-            {"id": "T001", "priority": "high", "status": "in_progress"},
+            {"id": "T007", "priority": "high", "status": "open"},
+            {"id": "T001", "priority": "high", "status": "in_progress"},  # in_progress should be excluded!
             {"id": "T002", "priority": "critical", "status": "open"},
             {"id": "T004", "priority": "critical", "status": "resolved"},  # resolved should be excluded!
             {"id": "T006", "priority": "medium", "status": "open"},
@@ -22,26 +23,30 @@ class TestReportsAndWorkQueue(unittest.TestCase):
 
         queue = reports.get_work_queue(tickets_list)
 
-        # Ensure resolved T004 is excluded
+        # Ensure resolved T004 and in_progress T001 are excluded
         queue_ids = [t["id"] for t in queue]
         self.assertNotIn("T004", queue_ids)
+        self.assertNotIn("T001", queue_ids)
 
-        # Expected order:
+        # Expected order (open tickets only):
         # 1. T002 (critical)
-        # 2. T001 (high, lower numeric ID than T003)
-        # 3. T003 (high)
+        # 2. T003 (high, lower numeric ID than T007)
+        # 3. T007 (high)
         # 4. T006 (medium)
         # 5. T005 (low)
-        expected_ids = ["T002", "T001", "T003", "T006", "T005"]
+        expected_ids = ["T002", "T003", "T007", "T006", "T005"]
         self.assertEqual(queue_ids, expected_ids)
 
     def test_empty_work_queue(self):
-        """Empty input or only resolved tickets produces empty work queue without crashing"""
+        """Empty input, in_progress-only, or resolved-only tickets produces empty work queue without crashing"""
         queue = reports.get_work_queue([])
         self.assertEqual(queue, [])
 
         resolved_only = [{"id": "T001", "priority": "high", "status": "resolved"}]
         self.assertEqual(reports.get_work_queue(resolved_only), [])
+
+        in_progress_only = [{"id": "T002", "priority": "high", "status": "in_progress"}]
+        self.assertEqual(reports.get_work_queue(in_progress_only), [])
 
     def test_report_zero_tickets_case(self):
         """F6: Zero-tickets case must not crash and returns zero counts"""

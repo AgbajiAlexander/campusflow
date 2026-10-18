@@ -5,6 +5,7 @@ independently testable without typing anything. cli.py's menu collects the
 filter values and calls this; this never mutates the tickets list it's given.
 """
 
+import copy
 from typing import Any, Dict, List, Optional
 
 
@@ -23,7 +24,8 @@ def search_tickets(
     - category / status / priority: exact match once supplied; None or ""
       means "don't filter by that field" -- a ticket doesn't need to match
       a filter that wasn't supplied.
-    - Read-only: never modifies any ticket in tickets_list.
+    - Read-only: never modifies any ticket in tickets_list, and returns deep
+      copies so caller cannot mutate stored records through results.
     """
     results: List[Dict[str, Any]] = []
     query = (title_query or "").strip().casefold()
@@ -39,6 +41,6 @@ def search_tickets(
             continue
         if priority and ticket.get("priority") != priority:
             continue
-        results.append(ticket)
+        results.append(copy.deepcopy(ticket))
 
     return results

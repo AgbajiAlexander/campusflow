@@ -60,6 +60,18 @@ class TestSearchTickets(unittest.TestCase):
         search.search_tickets(data, title_query="wifi", category="Network")
         self.assertEqual(data, snapshot)
 
+    def test_search_returns_deep_copies_safe_from_external_mutation(self):
+        """Modifying a returned search result does not affect the original in-memory ticket."""
+        data = sample_tickets()
+        results = search.search_tickets(data, title_query="Campus WiFi")
+        self.assertEqual(len(results), 1)
+        # Mutate the returned copy
+        results[0]["title"] = "MUTATED_TITLE"
+        results[0].setdefault("notes", []).append({"note_id": "N999"})
+        # Original must remain untouched
+        self.assertEqual(data[0]["title"], "Campus WiFi is down")
+        self.assertNotIn("N999", [n.get("note_id") for n in data[0].get("notes", [])])
+
 
 if __name__ == "__main__":
     unittest.main()

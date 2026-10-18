@@ -15,14 +15,14 @@ PRIORITY_RANKS = {
 
 
 def get_work_queue(tickets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Return active (unresolved) tickets ordered by priority and numeric ID.
+    """Return active open tickets ordered by priority and numeric ID (Open Work Queue - F5).
     
     Sorting rules:
-    - Exclude tickets with status 'resolved'.
+    - Only tickets with status 'open' are included (in_progress and resolved tickets are excluded).
     - Priority rank: critical (highest) -> high -> medium -> low.
     - Tie-breaker: earlier (lower) numeric ticket ID (e.g., T001 before T002).
     """
-    unresolved = [t for t in tickets if t.get("status") != "resolved"]
+    open_tickets = [t for t in tickets if t.get("status") == "open"]
 
     def sort_key(ticket: Dict[str, Any]):
         prio = ticket.get("priority", "low").strip().lower()
@@ -30,7 +30,7 @@ def get_work_queue(tickets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         num_id = extract_numeric_id(ticket.get("id", ""))
         return (rank, num_id)
 
-    return sorted(unresolved, key=sort_key)
+    return sorted(open_tickets, key=sort_key)
 
 
 def generate_report(tickets: List[Dict[str, Any]]) -> Dict[str, Any]:
